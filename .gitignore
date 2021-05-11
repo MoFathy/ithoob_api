@@ -6,6 +6,8 @@ tmp
 /tmp
 config
 /config
+controller
+/controller
 
 # local env files
 .env.local
