@@ -18,6 +18,26 @@ const createAdmin = () => {
     })
   })
 }
+
+router.post("/saveToken", (req, res) => {
+  models.Tokens.findOne({where: {token : req.body.token}}).then(token => {
+    if(token){
+      return res.json({status: 200, message : "Token allready exist"})
+    }else{
+      models.Tokens.create({token : req.body.token}).then(val => {
+        if(val){
+          return res.json({status: 200, message : "Token Saved Successfully", token : val.token})
+        }else{
+          return res.json({status: 400, message : "Somthing Went Wrong"})
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+  }).catch(err => {
+    console.log(err)
+  })
+})
 // createAdmin()
 router.post("/login", (req, res) => {
   var messages = {

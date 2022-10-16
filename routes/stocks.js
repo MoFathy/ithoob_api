@@ -10,6 +10,7 @@ const models = require("../models");
 const Size = models.Size;
 const Fabric = models.Fabric;
 const moment = require("moment");
+const { WinterCollectionSizes } = require("../models");
 const ShoeColor = models.ShoeColor;
 
 router.get("/sizes", (req, res) => {
@@ -35,8 +36,32 @@ router.get("/sizes", (req, res) => {
     });
 });
 
+router.get("/winter_collection_sizes", (req, res) => {
+  WinterCollectionSizes.findAll()
+    .then((responses) => {
+      res.status(200).json({
+        status: true,
+        sizes: responses.map((response) => {
+          return {
+            id: response["id"],
+            name_ar: response["name_ar"],
+            name_en: response["name_en"],
+          };
+        }),
+      });
+    })
+    .catch((err) => {
+      res.status(401).json({
+        status: false,
+        message: "Error while loading sizes",
+        error: err,
+      });
+    });
+});
+
 router.post("/create_size", (req, res) => {
-    Size.findOne({
+  let model = req.body.sizeType && req.body.sizeType === "winterCollection" ? WinterCollectionSizes : Size;
+  model.findOne({
     where: {
       name_en: req.body.name_en,
     },
@@ -47,7 +72,7 @@ router.post("/create_size", (req, res) => {
         message: "This Size Name Already Exist !",
       });
     } else {
-        Size.create({
+      model.create({
         name_ar: req.body.name_ar,
         name_en: req.body.name_en,
       })
@@ -68,7 +93,9 @@ router.post("/create_size", (req, res) => {
 });
 
 router.post("/delete_size", (req, res) => {
-  coupon = Size.destroy({
+  let model = req.body.sizeType && req.body.sizeType === "winterCollection" ? WinterCollectionSizes : Size;
+
+  coupon = model.destroy({
     where: {
       id: req.body.id,
     },

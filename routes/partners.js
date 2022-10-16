@@ -68,10 +68,10 @@ router.post('/get-code', (req, res) => {
         message: getStringVal.getStringVal(req.body.language, 'THE_EMAIL_YOU_ENTERED_IS_NOT_ELIGIBLE_FOR_DISCOUNT')
       })
     }
-    var generatedCode = generatePassword(6, false)
+    var generatedCode = generatePassword(4, false)
     models.PartnerCode.count().then(count => {
       models.PartnerCode.create({
-        code: generatedCode + "-it" + `${count + 1}`,
+        code: generatedCode + "-" + `${count + 1}`,
         partner_id: partner.id
       }).then(partnerCode => {
         // //console.log(partnerCode)

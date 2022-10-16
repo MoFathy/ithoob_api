@@ -151,6 +151,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "Stock", 
       foreignKey: "product_id"
     })
+    Product.hasMany(models.ProductStockVariation,  {
+      as: "productStockVariation", 
+      foreignKey: "product_id"
+    })
     // Product.belongsTo(models.FabricStock, {
     //   as: "Fabric",
     //   foreignKey: "fabric_id"      

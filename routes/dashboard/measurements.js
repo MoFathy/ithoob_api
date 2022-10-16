@@ -38,6 +38,11 @@ router.post(
                             value_5: req.body.value5,
                             value_6: req.body.value6,
                             value_7: req.body.value7,
+                            value_8: req.body.value8,
+                            value_9: req.body.value9,
+                            value_10: req.body.value10,
+                            value_11: req.body.value11,
+                            value_12: req.body.value12,
                             default_profile: req.body.defaultProfile,
                             user_id: req.body.userId
                         }).then(newMeasurementProfile => {
@@ -60,6 +65,11 @@ router.post(
                     value_5: req.body.value5,
                     value_6: req.body.value6,
                     value_7: req.body.value7,
+                    value_8: req.body.value8,
+                    value_9: req.body.value9,
+                    value_10: req.body.value10,
+                    value_11: req.body.value11,
+                    value_12: req.body.value12,
                     default_profile: req.body.defaultProfile,
                     user_id: req.body.userId
                 }).then(newMeasurementProfile => {
@@ -119,6 +129,11 @@ router.post(
             req.body.value_5 = Number(req.body.value_5) ? Number(req.body.value_5) : null
             req.body.value_6 = Number(req.body.value_6) ? Number(req.body.value_6) : null
             req.body.value_7 = Number(req.body.value_7) ? Number(req.body.value_7) : null
+            req.body.value_8 = Number(req.body.value_8) ? Number(req.body.value_8) : null
+            req.body.value_9 = Number(req.body.value_9) ? Number(req.body.value_9) : null
+            req.body.value_10 = Number(req.body.value_10) ? Number(req.body.value_10) : null
+            req.body.value_11 = Number(req.body.value_11) ? Number(req.body.value_11) : null
+            req.body.value_12 = Number(req.body.value_12) ? Number(req.body.value_12) : null
             //console.log(req.body);
             MeasurementProfile.findOne({where: {id: req.body.id}})
                 .then((profile) => {

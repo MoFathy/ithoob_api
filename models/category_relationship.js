@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         values: [
           "fabric",
           "yaka",
+          "adds",
           "zarzour",
           "akmam",
           "others",

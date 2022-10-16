@@ -24,7 +24,12 @@ router.post(
             "value_4",
             "value_5",
             "value_6",
-            "value_7"
+            "value_7",
+            "value_8",
+            "value_9",
+            "value_10",
+            "value_11",
+            "value_12",
           ]
         }
       }
@@ -43,7 +48,8 @@ router.post(
               adviceContent: req.body.language === 1 ? item.help_en : item.help,
               max: item.max,
               min: item.min,
-			  image: item.image,
+              image: item.image,
+              video: item.video,
               value: index + 1
             };
           })
@@ -106,6 +112,31 @@ router.post(
         measurement_opt: "value_7"
       }
     })
+    const measurementOpt8 = MeasurementGuide.findOne({
+      where: {
+        measurement_opt: "value_8"
+      }
+    })
+    const measurementOpt9 = MeasurementGuide.findOne({
+      where: {
+        measurement_opt: "value_9"
+      }
+    })
+    const measurementOpt10 = MeasurementGuide.findOne({
+      where: {
+        measurement_opt: "value_10"
+      }
+    })
+    const measurementOpt11 = MeasurementGuide.findOne({
+      where: {
+        measurement_opt: "value_11"
+      }
+    })
+    const measurementOpt12 = MeasurementGuide.findOne({
+      where: {
+        measurement_opt: "value_12"
+      }
+    })
 
     Promise.all([
       measurementOpt1,
@@ -115,6 +146,11 @@ router.post(
       measurementOpt5,
       measurementOpt6,
       measurementOpt7,
+      measurementOpt8,
+      measurementOpt9,
+      measurementOpt10,
+      measurementOpt11,
+      measurementOpt12,
 
     ]).then(results => {
       const option1 = results[0];
@@ -124,6 +160,11 @@ router.post(
       const option5 = results[4];
       const option6 = results[5];
       const option7 = results[6];
+      const option8 = results[7];
+      const option9 = results[8];
+      const option10 = results[9];
+      const option11 = results[10];
+      const option12 = results[11];
 
       if (req.body.measurementsInputs.value1 && req.body.measurementsInputs.value1 != "" && (req.body.measurementsInputs.value1 > option1.max || req.body.measurementsInputs.value1  < option1.min)) {
         return res.status(200).json({
@@ -168,6 +209,36 @@ router.post(
           message: req.body.language === 1 ? "Thoob’s neck circumference is not within the boundaries, please correct it" : "وسع الياقة ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
         })
       }
+      if (req.body.measurementsInputs.value8 && req.body.measurementsInputs.value8 != "" && (req.body.measurementsInputs.value8 > option8.max || req.body.measurementsInputs.value8  < option8.min)) {
+        return res.status(200).json({
+          status: false,
+          message: req.body.language === 1 ? "Thoob’s full chest circumference is not within the boundaries, please correct it" : "وسع الصدر كامل ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+        })
+      }
+      if (req.body.measurementsInputs.value9 && req.body.measurementsInputs.value9 != "" && (req.body.measurementsInputs.value9 > option9.max || req.body.measurementsInputs.value9  < option9.min)) {
+        return res.status(200).json({
+          status: false,
+          message: req.body.language === 1 ? "Thoob’s F.chest circumference is not within the boundaries, please correct it" : "وسع نصف الصدر ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+        })
+      }
+      if (req.body.measurementsInputs.value10 && req.body.measurementsInputs.value10 != "" && (req.body.measurementsInputs.value10 > option10.max || req.body.measurementsInputs.value10  < option10.min)) {
+        return res.status(200).json({
+          status: false,
+          message: req.body.language === 1 ? "Thoob’s hips  circumference is not within the boundaries, please correct it" : "وسع أسفل الوسط ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+        })
+      }
+      if (req.body.measurementsInputs.value11 && req.body.measurementsInputs.value11 != "" && (req.body.measurementsInputs.value11 > option11.max || req.body.measurementsInputs.value11  < option11.min)) {
+        return res.status(200).json({
+          status: false,
+          message: req.body.language === 1 ? "Thoob’s armhole  circumference is not within the boundaries, please correct it" : "وسع أعلى الزراع ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+        })
+      }
+      if (req.body.measurementsInputs.value12 && req.body.measurementsInputs.value12 != "" && (req.body.measurementsInputs.value12 > option12.max || req.body.measurementsInputs.value12  < option12.min)) {
+        return res.status(200).json({
+          status: false,
+          message: req.body.language === 1 ? "Thoob’s bottom length  circumference is not within the boundaries, please correct it" : "وسع أسفل الثوب ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+        })
+      }
       const measurement = {
         name: req.body.fileName
       };
@@ -191,6 +262,21 @@ router.post(
 	  }
 	  if(req.body.measurementsInputs.value7 && req.body.measurementsInputs.value7 != ""){
 		  measurement["value_7"] = req.body.measurementsInputs.value7
+	  }
+    if(req.body.measurementsInputs.value8 && req.body.measurementsInputs.value8 != ""){
+		  measurement["value_8"] = req.body.measurementsInputs.value8
+	  }
+    if(req.body.measurementsInputs.value9 && req.body.measurementsInputs.value9 != ""){
+		  measurement["value_9"] = req.body.measurementsInputs.value9
+	  }
+    if(req.body.measurementsInputs.value10 && req.body.measurementsInputs.value10 != ""){
+		  measurement["value_10"] = req.body.measurementsInputs.value10
+	  }
+    if(req.body.measurementsInputs.value11 && req.body.measurementsInputs.value11 != ""){
+		  measurement["value_11"] = req.body.measurementsInputs.value11
+	  }
+    if(req.body.measurementsInputs.value12 && req.body.measurementsInputs.value12 != ""){
+		  measurement["value_12"] = req.body.measurementsInputs.value12
 	  }
       req.user
         .getMeasurements()
@@ -274,9 +360,14 @@ router.post(
                 profile["value_4"],
                 profile["value_5"],
                 profile["value_6"],
-                profile["value_7"]
+                profile["value_7"],
+                profile["value_8"],
+                profile["value_9"],
+                profile["value_10"],
+                profile["value_11"],
+                profile["value_12"],
               ].filter(i => i !== null).length;
-              var percentage = Math.round((lengthNotNull / 7) * 100);
+              var percentage = Math.round((lengthNotNull / 12) * 100);
               return {
                 title: profile.name,
                 percentage: percentage + "%",
@@ -340,9 +431,14 @@ router.post(
           profile["value_4"],
           profile["value_5"],
           profile["value_6"],
-          profile["value_7"]
+          profile["value_7"],
+          profile["value_8"],
+          profile["value_9"],
+          profile["value_10"],
+          profile["value_11"],
+          profile["value_12"],
         ].filter(i => i !== null).length;
-        var percentage = Math.round((lengthNotNull / 7) * 100);
+        var percentage = Math.round((lengthNotNull / 12) * 100);
         res.status(200).json({
           status: true,
           profileDetails: {
@@ -356,6 +452,11 @@ router.post(
             value5: profile.value_5,
             value6: profile.value_6,
             value7: profile.value_7,
+            value8: profile.value_8,
+            value9: profile.value_9,
+            value10: profile.value_10,
+            value11: profile.value_11,
+            value12: profile.value_12,
             default: profile.default_profile ? "1" : "0"
           }
         });
@@ -430,6 +531,36 @@ router.post(
             message: req.body.language === 1 ? "Thoob’s neck circumference is not within the boundaries, please correct it" : "وسع الياقة ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
         })
     }
+    if (req.body.value8 && req.body.value8 != "" && (req.body.value8 > 95 || req.body.value8 < 35)) {
+      return res.status(200).json({
+          status: false,
+          message: req.body.language === 1 ? "Thoob’s Full chest is not within the boundaries, please correct it" : "وسع الصدر كامل ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+        })
+    }
+    if (req.body.value9 && req.body.value9 != "" && (req.body.value9 > 95 || req.body.value9 < 40)) {
+      return res.status(200).json({
+          status: false,
+              message: req.body.language === 1 ? "Thoob’s F.chest is not within the boundaries, please correct it" : "وسع نصف الصدر ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+          })
+      }
+    if (req.body.value10 && req.body.value10 != "" && (req.body.value10 > 100 || req.body.value10 < 36)) {
+        return res.status(200).json({
+            status: false,
+            message: req.body.language === 1 ? "Thoob’s hips is not within the boundaries, please correct it" : "وسع أسفل الوسط ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+        })
+    }
+    if (req.body.value11 && req.body.value11 != "" && (req.body.value11 > 30 || req.body.value11 < 10)) {
+      return res.status(200).json({
+          status: false,
+          message: req.body.language === 1 ? "Thoob’s armhole is not within the boundaries, please correct it" : "وسع أعلى الزراع ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+      })
+    }
+    if (req.body.value12 && req.body.value12 != "" && (req.body.value12 > 100 || req.body.value12 < 40)) {
+      return res.status(200).json({
+          status: false,
+          message: req.body.language === 1 ? "Thoob’s bottom length is not within the boundaries, please correct it" : "وسع أسفل الثوب ليس من ضمن المقاسات المسموح بها, من فضلك قم بالتعديل"
+      })
+    }
     if ("name" in req.body) updateVar["name"] = req.body.name;
     if ("value1" in req.body) updateVar["value_1"] = req.body.value1 == "" ? null : req.body.value1;
     if ("value2" in req.body) updateVar["value_2"] = req.body.value2 == "" ? null : req.body.value2;
@@ -438,6 +569,11 @@ router.post(
     if ("value5" in req.body) updateVar["value_5"] = req.body.value5 == "" ? null : req.body.value5;
     if ("value6" in req.body) updateVar["value_6"] = req.body.value6 == "" ? null : req.body.value6;
     if ("value7" in req.body) updateVar["value_7"] = req.body.value7 == "" ? null : req.body.value7;
+    if ("value8" in req.body) updateVar["value_8"] = req.body.value8 == "" ? null : req.body.value8;
+    if ("value9" in req.body) updateVar["value_9"] = req.body.value9 == "" ? null : req.body.value9;
+    if ("value10" in req.body) updateVar["value_10"] = req.body.value10 == "" ? null : req.body.value10;
+    if ("value11" in req.body) updateVar["value_11"] = req.body.value11 == "" ? null : req.body.value11;
+    if ("value12" in req.body) updateVar["value_12"] = req.body.value12 == "" ? null : req.body.value12;
 
     if (Object.keys(updateVar).length < 1) {
       return res.status(200).json({

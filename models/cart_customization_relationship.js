@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     type: {
       type: DataTypes.ENUM,
-      values: ["fabric", "yaka","zarzour","akmam","others"]
+      values: ["fabric", "yaka","zarzour","akmam","adds","others"]
     },
     // cart_prod_id : {
     //   type: DataTypes.INTEGER,

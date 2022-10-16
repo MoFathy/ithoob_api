@@ -26,6 +26,21 @@ module.exports = (sequelize, DataTypes) => {
     value_7: {
       type: DataTypes.FLOAT
     },
+    value_8: {
+      type: DataTypes.FLOAT
+    },
+    value_9: {
+      type: DataTypes.FLOAT
+    },
+    value_10: {
+      type: DataTypes.FLOAT
+    },
+    value_11: {
+      type: DataTypes.FLOAT
+    },
+    value_12: {
+      type: DataTypes.FLOAT
+    },
     default_profile: {
       type: DataTypes.BOOLEAN,
       defaultValue: false

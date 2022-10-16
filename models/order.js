@@ -35,12 +35,17 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.FLOAT,
         defaultValue: 0
       },
+      coupon_discount_type: DataTypes.ENUM('money','percent'),
       coupon_discount: {
         type: DataTypes.FLOAT,
         defaultValue: 0
       },
       coupon_code: {
         type: DataTypes.STRING,
+      },
+      quantity_discount: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0
       },
       payment_id: {
         type: DataTypes.STRING,

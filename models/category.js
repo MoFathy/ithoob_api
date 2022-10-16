@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
           "color",
           "betana",
           "accessory",
+          "adds",
           "child",
           "general",
           "category"

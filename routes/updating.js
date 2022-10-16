@@ -4,6 +4,7 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const passport = require("passport");
 const models = require("../models");
+const { ProductStock } = require("../models");
 const sequelize = models.sequelize;
 const CartProductRelationship = models.CartProductRelationship;
 
@@ -160,6 +161,8 @@ router.post(
           });
         });
     }
+    // ProductStock.findOne({where: {"product_id": req.body.productId}}).then(prStock => {
+    // if(prStock && prStock.value >=  req.body.quantity){
     CartProductRelationship.update(
       {
         quantity: req.body.quantity,
@@ -177,19 +180,27 @@ router.post(
         });
       })
       .catch((err) => {
-        //console.log(err);
-        res.status(401).json({
-          status: false,
-          message: "error in editing quantity",
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
+        console.log(err);
         res.status(401).json({
           status: false,
           message: "error in editing quantity",
         });
       });
+    // }else{
+    //   res.status(200).json({
+    //     status: false,
+    //     message: "error in editing quantity",
+    //     notEnough: true
+    //   });
+    // }
+    // })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     res.status(401).json({
+    //       status: false,
+    //       message: "error in editing quantity",
+    //     });
+    //   });
   }
 );
 
@@ -197,9 +208,9 @@ router.post(
   "/edit-item-measurement",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    console.log('====================================');
+    console.log("====================================");
     console.log(req.body);
-    console.log('====================================');
+    console.log("====================================");
     CartProductRelationship.findOne({
       where: {
         id: req.body.productId,
@@ -227,8 +238,22 @@ router.post(
             product.Category.Metas.map((meta) => {
               productCatMeta[meta.type] = meta.category_meta_relationship.value;
             });
-            if(req.body.stockUpdate){
-               if (req.body.size) {
+            if (req.body.size && req.body.size === "variationSize"){
+              return cartProductRel
+              .createMeta({
+                property: "variationSize",
+                value: 0,
+                quantity_id: req.body.quantity_id,
+              })
+              .then(() => {
+                res.status(200).json({ status: true });
+              })
+              .catch((err) => {
+                //console.log(err);
+                res.status(402).json({ status: false });
+              });
+            }else if (req.body.stockUpdate) {
+              if (req.body.size) {
                 if (productCatMeta.sizeType === "shoes") {
                   // If there's already "sizeMan" value in "cart_product_meta" table. Update it with the new size!
                   if (relationMetaObject.shoesSize) {
@@ -298,7 +323,7 @@ router.post(
                     /**
                      * If there's no current value. Create new row with "shoesSize" property & its size.
                      * Next time, it will be updated, instead of re-create new entry.
-                    */
+                     */
                     return cartProductRel
                       .createMeta({
                         property: "accessorySize",
@@ -313,7 +338,7 @@ router.post(
                         res.status(401).json({ status: false });
                       });
                   }
-                }else if(productCatMeta.sizeType === "sizeable"){
+                } else if (productCatMeta.sizeType === "sizeable") {
                   if (relationMetaObject.sizable) {
                     return models.CartProductMeta.update(
                       {
@@ -373,7 +398,7 @@ router.post(
                     });
                 }
               }
-            }else if (req.body.sizeManFlag) {
+            } else if (req.body.sizeManFlag) {
               if (relationMetaObject.size) {
                 return models.CartProductMeta.update(
                   {
@@ -405,8 +430,7 @@ router.post(
                     res.status(401).json({ status: false });
                   });
               }
-            } 
-            else if (
+            } else if (
               req.body.size === "s" ||
               req.body.size === "m" ||
               req.body.size === "l"
@@ -460,59 +484,59 @@ router.post(
                     });
                 }
               }
-            }else if (typeof req.body.size === "number") {
+            } else if (typeof req.body.size === "number") {
               if (productCatMeta.sizeType === "shoes") {
-    
                 // If there's already "sizeMan" value in "cart_product_meta" table. Update it with the new size!
-                if(relationMetaObject.shoesSize){
+                if (relationMetaObject.shoesSize) {
                   return models.CartProductMeta.update(
                     { property: "shoesSize", value: req.body.size },
                     {
                       where: {
                         cart_prod_id: cartProductRel.id,
-                        property: "shoesSize"
-                      }
+                        property: "shoesSize",
+                      },
                     }
                   )
-                  .then(() => {
-                    res.status(200).json({ status: true });
-                  })
-                  .catch(err => {
-                    //console.log(err);
-                    res.status(401).json({ status: false });
-                  });
-                }
-                else{
+                    .then(() => {
+                      res.status(200).json({ status: true });
+                    })
+                    .catch((err) => {
+                      //console.log(err);
+                      res.status(401).json({ status: false });
+                    });
+                } else {
                   /**
-                   * If there's no current value. Create new row with "shoesSize" property & its size. 
+                   * If there's no current value. Create new row with "shoesSize" property & its size.
                    * Next time, it will be updated, instead of re-create new entry.
                    */
                   return cartProductRel
-                  .createMeta({ property: "shoesSize", value: req.body.size })
-                  .then(() => {
-                    res.status(200).json({ status: true });
-                  })
-                  .catch(err => {
-                    //console.log(err);
-                    res.status(401).json({ status: false });
-                  });
+                    .createMeta({ property: "shoesSize", value: req.body.size })
+                    .then(() => {
+                      res.status(200).json({ status: true });
+                    })
+                    .catch((err) => {
+                      //console.log(err);
+                      res.status(401).json({ status: false });
+                    });
                 }
               } else {
                 return Promise.all([
-                  cartProductRel
-                      .update({profile_id: req.body.size}),
-                  models.CartProductMeta
-                      .destroy({where: {cart_prod_id: req.body.productId, property: "sizeMan"}})
+                  cartProductRel.update({ profile_id: req.body.size }),
+                  models.CartProductMeta.destroy({
+                    where: {
+                      cart_prod_id: req.body.productId,
+                      property: "sizeMan",
+                    },
+                  }),
                 ])
-                .then(() => {
-                  res.status(200).json({ status: true });
-                })
-                .catch(err => {
-                  //console.log(err);
-                  res.status(401).json({ status: false });
-                });
+                  .then(() => {
+                    res.status(200).json({ status: true });
+                  })
+                  .catch((err) => {
+                    //console.log(err);
+                    res.status(401).json({ status: false });
+                  });
               }
-              
             } else {
               return res.status(401).json({
                 status: false,
@@ -694,6 +718,7 @@ router.post(
             var zarzourSelectionArray = [];
             var akmamSelectionArray = [];
             var othersSelectionArray = [];
+            var addsSelectionArray = [];
 
             if (req.body.fabric_custom) {
               //console.log("here in fabric");
@@ -705,6 +730,9 @@ router.post(
 
               yakaSelectionArray = [...req.body.yaka_custom];
               //console.log(yakaSelectionArray);
+            }
+            if (req.body.adds_custom) {
+              addsSelectionArray = [...req.body.adds_custom];
             }
             if (req.body.zarzour_custom) {
               zarzourSelectionArray = [...req.body.zarzour_custom];
@@ -733,6 +761,13 @@ router.post(
                 },
               },
             });
+            var addsCategory = models.CategoryRelationship.findAll({
+              where: {
+                id: {
+                  [Op.in]: addsSelectionArray,
+                },
+              },
+            });
             var zarzourCategory = models.CategoryRelationship.findAll({
               where: {
                 id: {
@@ -754,12 +789,15 @@ router.post(
                 },
               },
             });
-            let destroyOldCutomizations = models.CartCustomizeRelationship.destroy(
-              { where: { cart_prod_id: cartProductRel.id }, transaction: t }
-            );
+            let destroyOldCutomizations =
+              models.CartCustomizeRelationship.destroy({
+                where: { cart_prod_id: cartProductRel.id },
+                transaction: t,
+              });
             return Promise.all([
               fabricCategory,
               yakaCategory,
+              addsCategory,
               zarzourCategory,
               akmamCategory,
               othersCategory,
@@ -786,6 +824,13 @@ router.post(
               yakaSelectionArray.forEach((i) => {
                 customsArr.push({
                   type: "yaka",
+                  category_rel_id: i,
+                  cart_prod_id: cartProductRel.id,
+                });
+              });
+              addsSelectionArray.forEach((i) => {
+                customsArr.push({
+                  type: "adds",
                   category_rel_id: i,
                   cart_prod_id: cartProductRel.id,
                 });

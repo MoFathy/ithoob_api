@@ -208,7 +208,7 @@ router.post("/yaka", (req, res) => {
   Category.findAll({
     where: {
       type: {
-        [Op.or]: [nameFilter, "accessory", "betana"]
+        [Op.or]: [nameFilter]
       },
       available: true
     },
@@ -677,7 +677,7 @@ router.post("/fabrics2", (req, res) => {
 router.post("/categories", (req, res) => {
   let titleKey = req.body.language == 1 ? "title_en" : "title";
   let nameKey = req.body.language == 1 ? "name_en" : "name";
-  const generalOptionFetch = models.GeneralOption.findAll({where: {key: {[Op.or]: ['site_title','site_description','delivery_price','man_price']}}})
+  const generalOptionFetch = models.GeneralOption.findAll({where: {key: {[Op.or]: ['site_title','site_description','delivery_price','man_price','tailor_extra_expenses']}}})
   const cartFetch = Category.findOne({
     where: {
       type: "category",
@@ -713,6 +713,7 @@ router.post("/categories", (req, res) => {
         siteDescription: generalOption.find(option=>option.key=="site_description") ? generalOption.find(option=>option.key=="site_description").value : "",
         deliveryPrice:generalOption.find(option=>option.key=="delivery_price") ? generalOption.find(option=>option.key=="delivery_price").value : "",
         sizeManPrice:generalOption.find(option=>option.key=="man_price") ? generalOption.find(option=>option.key=="man_price").value : "",
+        sizeManExtraPrice:generalOption.find(option=>option.key=="tailor_extra_expenses") ? generalOption.find(option=>option.key=="tailor_extra_expenses").value : "",
         categories: category.Children.map(main => {
           var metaObject = {};
           main.Metas.forEach(meta => {
@@ -799,6 +800,155 @@ router.post("/measurements-guide", (req, res) => {
       });
     });
  });
+
+ router.post("/adds", (req, res) => {
+  var nameFilter = ""
+  if (req.body.type == 1) nameFilter = "yaka";
+  else if (req.body.type == 2) nameFilter = "zarzour";
+  let titleKey = req.body.language == 1 ? "title_en" : "title";
+  let nameKey = req.body.language == 1 ? "name_en" : "name";
+  Category.findAll({
+    where: {
+      type: {
+        [Op.or]: ["accessory", "betana"]
+      },
+      available: true
+    },
+    include: [
+      {
+        model: models.Category,
+        as: "Children",
+        include: [
+          {
+            model: models.Category,
+            as: "Children",
+            include: [
+              { model: models.CategoryMeta, as: "Metas" },
+              {
+                model: models.Category,
+                as: "Children",
+                include: [
+                  {
+                    model: models.Category,
+                    as: "Children",
+                    include: [{ model: models.CategoryMeta, as: "Metas" }]
+                  },
+                  { model: models.CategoryMeta, as: "Metas" }
+                ]
+              }
+            ]
+          },
+          { model: models.CategoryMeta, as: "Metas" }
+        ]
+      },
+      { model: models.CategoryMeta, as: "Metas" }
+    ]
+  })
+    .then(yaka => {
+      yaka.forEach((lvl0)=>{
+        lvl0.Children = lvl0.Children?lvl0.Children.filter((itx)=>{return itx.available}):[];
+
+        lvl0.Children.forEach((lvl1)=>{
+          lvl1.Children = lvl1.Children?lvl1.Children.filter((itx)=>{return itx.available}):[];
+
+          lvl1.Children.forEach((lvl2)=>{
+            lvl2.Children = lvl2.Children?lvl2.Children.filter((itx)=>{return itx.available}):[];
+            
+            lvl2.Children.forEach((lvl3)=>{
+              lvl3.Children = lvl3.Children?lvl3.Children.filter((itx)=>{return itx.available}):[];
+              
+              lvl3.Children.forEach((lvl4)=>{
+                lvl4.Children = lvl4.Children?lvl4.Children.filter((itx)=>{return itx.available}):[];
+              })
+            })
+          })
+        })
+      })
+      var yakas = yaka.filter(subcat => subcat.type === "yaka");
+      var accessory = yaka.filter(subcat => subcat.type === "accessory");
+      var betana = yaka.filter(subcat => subcat.type === "betana");
+      res.status(200).json({
+        status: true,
+        generalItems: [
+          ...yaka.filter(subcat => subcat.type === nameFilter),
+          ...yaka.filter(subcat => subcat.type === "betana"),
+          ...yaka.filter(subcat => subcat.type === "accessory")
+        ].map(subcat => {
+          //console.log('res'+subcat[titleKey]+'nameFilter'+nameFilter+req.body.type)
+          var metaObject = {};
+          subcat.Metas.forEach(meta => {
+            metaObject[meta.type] = meta.category_meta_relationship.value;
+          });
+          return {
+            id: subcat.id,
+            title: subcat[titleKey],
+						type: subcat.type,
+            isTwoRow:
+              metaObject.two_row == "true"
+                ? true
+                : metaObject.two_row == "false"
+                ? false
+                : undefined,
+
+            items: subcat.Children.map(item => {
+              var metaObject = {};
+              item.Metas.forEach(meta => {
+                metaObject[meta.type] = meta.category_meta_relationship.value;
+              });
+              return {
+                id: item.category_relationship.id,
+                name: item[nameKey],
+                ...metaObject,
+                isTwoRow:
+                  metaObject.two_row == "true"
+                    ? true
+                    : metaObject.two_row == "false"
+                    ? false
+                    : undefined,
+                withAccessory: metaObject.withAccessory == "true"
+                    ? true
+                    : metaObject.withAccessory == "false"
+                    ? false
+                    : undefined,
+                sub: {
+                  subtitle: item[titleKey],
+                  isTwoRow:
+                    metaObject.two_row == "true"
+                      ? true
+                      : metaObject.two_row == "false"
+                      ? false
+                      : undefined,
+                  subItems:
+                    item.Children.length > 0
+                      ? item.Children.map(sub => {
+                          var metaObject = {};
+                          sub.Metas.forEach(meta => {
+                            metaObject[meta.type] =
+                              meta.category_meta_relationship.value;
+                          });
+                          return {
+                            id: sub.category_relationship.id,
+                            name: sub[nameKey],
+                            // imgSrc: metaObject.image,
+                            ...metaObject
+                          };
+                        })
+                      : undefined
+                }
+              };
+            })
+          };
+        })
+      });
+    })
+    .catch(err => {
+      //console.log(err);
+      res.status(401).json({
+        status: false,
+        message: "Somtheing went wrong."
+      });
+    });
+});
 
 //next 3 api maybe helpful for dashboar
 // router.post("/category", (req, res) => {

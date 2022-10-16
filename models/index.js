@@ -120,6 +120,7 @@ const models = {
   ShoeColor: sequelize.import('./shoecolor'),
   Fabric: sequelize.import('./fabric'),
   Size: sequelize.import('./size'),
+  WinterCollectionSizes: sequelize.import('./wintercollectionsizes.js'),
   ContentLink: sequelize.import('./content_link'),
   CartMetaImage: sequelize.import("./cart_meta_image"),
   Admin: sequelize.import("./admin"),
@@ -130,7 +131,9 @@ const models = {
   ProductStock: sequelize.import("./product_stock"),
   HomeSections: sequelize.import("./home_sections"),
   TailorRequest: sequelize.import("./tailor_request"),
-  DeliveryAddress: sequelize.import("./delivery_address")
+  DeliveryAddress: sequelize.import("./delivery_address"),
+  Tokens: sequelize.import("./tokens.js"),
+  ProductStockVariation: sequelize.import("./product_stock_variation.js"),
   // FabricStock: sequelize.import("fabric_stock")
 }
 

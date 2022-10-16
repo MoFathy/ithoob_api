@@ -52,7 +52,7 @@ router.post(
   "/edit-product-amount",
   passport.authenticate("jwt-admin", { session: false }),
   (req, res) => {
-    if (!req.body.productId || !req.body.amount) {
+    if (!req.body.productId) {
       return res.status(200).json({
         status: false,
         message: "Please add productId and amount",
@@ -1074,7 +1074,10 @@ router.post(
                   });
                 }
                 console.log("error happened here after quantity =======");
-
+                console.log('====================================');
+                console.log(category.Parents[0]);
+                console.log(category.Parents[0].Metas);
+                console.log('====================================');
                 category.Parents[0].Metas.forEach((meta) => {
                   categoryMetas[meta.type] =
                     meta.category_meta_relationship.value;
@@ -1286,6 +1289,18 @@ router.post(
                       },
                     ];
                   });
+                }).catch((err) => {
+                  //console.error(err);
+                  res.status(200).json({
+                    status: false,
+                    error: `failed to create product category relationships${err}`,
+                  });
+                });
+              }).catch((err) => {
+                //console.error(err);
+                res.status(200).json({
+                  status: false,
+                  error: `failed to create project${err}`,
                 });
               });
             })
@@ -1340,7 +1355,7 @@ router.post(
                     try {
                       return ftpDeploy
                         .deploy(config)
-                        .then(() => {
+                        .then((ddd) => {
                           //console.log('delete')
                           // if(req.files.product_image)
                           // {
@@ -1400,6 +1415,12 @@ router.post(
                 error: err,
               });
             });
+        }).catch((err) => {
+          //console.error(err);
+          res.status(200).json({
+            status: false,
+            error: 'failed to get category or product'+err,
+          });
         });
       }
     });

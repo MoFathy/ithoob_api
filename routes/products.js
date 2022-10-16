@@ -94,6 +94,7 @@ router.post("/product-details/:slug", (req, res) => {
       available: true,
       slug: req.params.slug
     },
+    include: [{association : "productStockVariation"}]
     // include: [
     //   { model: models.ProductMeta, as: "Metas" },
     //   {
@@ -550,7 +551,16 @@ router.post("/product-details/:slug", (req, res) => {
             isRecommended: product.is_recommended,
             isBestSeller: product.is_best_seller,
             discount: discount
-          }
+          },
+          stockVariation: product.productStockVariation.map(el => {
+            return{ 
+             id: el.id,
+             size: el.size,
+             color: el.color,
+             quantity: el.quantity,
+             sku: el.sku
+           }
+          })
         },
         policies: policy.Children.map(item => {
           var metaObject = {};
@@ -645,6 +655,8 @@ router.post("/home-products", (req, res) => {
           "home_second_cat",
           "home_third_cat",
           "home_fourth_cat",
+          "home_fifth_cat",
+          "home_sixth_cat",
           "home_recommended_cat"
         ]
       }
@@ -707,6 +719,34 @@ router.post("/home-products", (req, res) => {
             )
             .then(data => {
               result["shoesCategory"] = data;
+            })
+        );
+      }
+      if (response.find(item => item.key == "home_fifth_cat")) {
+        fetchArr.push(
+          homeController
+            .getHomeProducts(
+              res,
+              req.body.language,
+              response.find(item => item.key == "home_fifth_cat").value,
+              "latest"
+            )
+            .then(data => {
+              result["winterCollectionCategory"] = data;
+            })
+        );
+      }
+      if (response.find(item => item.key == "home_sixth_cat")) {
+        fetchArr.push(
+          homeController
+            .getHomeProducts(
+              res,
+              req.body.language,
+              response.find(item => item.key == "home_sixth_cat").value,
+              "latest"
+            )
+            .then(data => {
+              result["perfumeCategory"] = data;
             })
         );
       }

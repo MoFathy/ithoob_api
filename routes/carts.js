@@ -128,6 +128,7 @@ router.post(
                   ],
                 },
                 { association: "Stock" },
+                {association: "productStockVariation"}
                 // {
                 //   association: "Promotions"
                 // }
@@ -177,8 +178,7 @@ router.post(
                     : product.price_discount
                     ? product.price_discount
                     : product.price;
-                  productsCost +=
-                    parseFloat(productPrice) * cartProductRel.quantity;
+                  productsCost += parseFloat(productPrice) * cartProductRel.quantity;
                 })
               : null;
 
@@ -440,6 +440,7 @@ router.post(
                           }
                         })(), //product.image,
                         productId: cartProductRel.id,
+                        productOriginId: product.id,
                         title: product[titleKey],
                         slug: product.slug,
                         subCategory: productCatMeta.slug ? productCatMeta.slug : null,
@@ -480,7 +481,17 @@ router.post(
                               cartProductRel.Profile.value_6 != null &&
                               cartProductRel.Profile.value_6 != 0 &&
                               cartProductRel.Profile.value_7 != null &&
-                              cartProductRel.Profile.value_7 != 0
+                              cartProductRel.Profile.value_7 != 0 &&
+                              cartProductRel.Profile.value_8 != null &&
+                              cartProductRel.Profile.value_8 != 0 &&
+                              cartProductRel.Profile.value_9 != null &&
+                              cartProductRel.Profile.value_9 != 0 &&
+                              cartProductRel.Profile.value_10 != null &&
+                              cartProductRel.Profile.value_10 != 0 &&
+                              cartProductRel.Profile.value_11 != null &&
+                              cartProductRel.Profile.value_11 != 0 &&
+                              cartProductRel.Profile.value_12 != null &&
+                              cartProductRel.Profile.value_12 != 0
                             : undefined,
                         },
                         // measurement for parent not for child, check with abdo
@@ -527,6 +538,15 @@ router.post(
                         },
                         notAvailableAnymore: notAvailableProduct,
                         inStock: isStockAvailable,
+                        stockVariation: product.productStockVariation.map(el => {
+                          return{ 
+                           id: el.id,
+                           size: el.size,
+                           color: el.color,
+                           quantity: el.quantity,
+                           sku: el.sku
+                         }
+                         })
                       };
                     })
                   : [],
@@ -553,7 +573,17 @@ router.post(
                         size.value_6 != null &&
                         size.value_6 != 0 &&
                         size.value_7 != null &&
-                        size.value_7 != 0;
+                        size.value_7 != 0 &&
+                        size.value_8 != null &&
+                        size.value_8 != 0 &&
+                        size.value_9 != null &&
+                        size.value_9 != 0 &&
+                        size.value_10 != null &&
+                        size.value_10 != 0 &&
+                        size.value_11 != null &&
+                        size.value_11 != 0 &&
+                        size.value_12 != null &&
+                        size.value_12 != 0;
                       return {
                         id: size.id,
                         sizeName: size.name,
@@ -604,7 +634,17 @@ router.post(
                         cartProductRel.Profile.value_6 == null ||
                         cartProductRel.Profile.value_6 == 0 ||
                         cartProductRel.Profile.value_7 == null ||
-                        cartProductRel.Profile.value_7 == 0)
+                        cartProductRel.Profile.value_7 == 0 ||
+                        cartProductRel.Profile.value_8 == null ||
+                        cartProductRel.Profile.value_8 == 0 ||
+                        cartProductRel.Profile.value_9 == null ||
+                        cartProductRel.Profile.value_9 == 0 ||
+                        cartProductRel.Profile.value_10 == null ||
+                        cartProductRel.Profile.value_10 == 0 ||
+                        cartProductRel.Profile.value_11 == null ||
+                        cartProductRel.Profile.value_11 == 0 ||
+                        cartProductRel.Profile.value_12 == null ||
+                        cartProductRel.Profile.value_12 == 0)
                     ) {
                       yup = false;
                       yupo = false;
@@ -652,6 +692,13 @@ router.post(
                       (productCatMeta.slug == 'all-rings' &&
                       Object.keys(relationMetaObject).length > 0)
                     ) {
+                      yupo = true;
+                    }
+                    // will remove the next condition later
+                    if(
+                      productCatMeta.sizeType &&
+                      productCatMeta.sizeType == "sizeable"
+                    ){
                       yupo = true;
                     }
                     yupf.push(yupo);
@@ -851,7 +898,15 @@ router.post(
                       cartProductRel.Profile.value_6 == null ||
                       cartProductRel.Profile.value_6 == 0 ||
                       cartProductRel.Profile.value_7 == null ||
-                      cartProductRel.Profile.value_7 == 0)
+                      cartProductRel.Profile.value_7 == 0 ||
+                      cartProductRel.Profile.value_9 == null ||
+                      cartProductRel.Profile.value_9 == 0 ||
+                      cartProductRel.Profile.value_10 == null ||
+                      cartProductRel.Profile.value_10 == 0 ||
+                      cartProductRel.Profile.value_11 == null ||
+                      cartProductRel.Profile.value_11 == 0 ||
+                      cartProductRel.Profile.value_12 == null ||
+                      cartProductRel.Profile.value_12 == 0)
                   ) {
                     yup = false;
                     yupo = false;
@@ -899,6 +954,14 @@ router.post(
                     (productCatMeta.slug == 'all-rings' &&
                     Object.keys(relationMetaObject).length > 0)
                   ) {
+                    yupo = true;
+                  }
+                  
+                  // will remove the next condition later
+                  if(
+                    productCatMeta.sizeType &&
+                    productCatMeta.sizeType == "sizeable"
+                  ){
                     yupo = true;
                   }
                   yupf.push(yupo);
@@ -1126,6 +1189,7 @@ router.post(
                     : null;
                   var fabricSelectionArray = [];
                   var yakaSelectionArray = [];
+                  var addsSelectionArray = [];
                   var zarzourSelectionArray = [];
                   var akmamSelectionArray = [];
                   var othersSelectionArray = [];
@@ -1141,6 +1205,9 @@ router.post(
                           break;
                         case "yaka":
                           yakaSelectionArray.push(selectionId);
+                          break;
+                        case "adds":
+                          addsSelectionArray.push(selectionId);
                           break;
                         case "betana":
                           yakaSelectionArray.push(selectionId);
@@ -1164,6 +1231,9 @@ router.post(
                   if (item.yaka) {
                     yakaSelectionArray = [...item.yaka];
                   }
+                  if (item.adds) {
+                    addsSelectionArray = [...item.adds];
+                  }
                   if (item.zarzour) {
                     zarzourSelectionArray = [...item.zarzour];
                   }
@@ -1181,6 +1251,9 @@ router.post(
                   }
                   if (item.yaka_custom) {
                     yakaSelectionArray.push(...item.yaka_custom);
+                  }
+                  if (item.adds_custom) {
+                    addsSelectionArray.push(...item.adds_custom);
                   }
                   if (item.zarzour_custom) {
                     zarzourSelectionArray.push(...item.zarzour_custom);
@@ -1218,6 +1291,20 @@ router.post(
 
                   var setCustomizedYaka = models.CartCustomizeRelationship.bulkCreate(
                     yakaSelectionArrayToCreate,
+                    { transaction: t }
+                  );
+
+                  var addsSelectionArrayToCreate = [];
+                  addsSelectionArray.map((i) =>
+                    addsSelectionArrayToCreate.push({
+                      type: "adds",
+                      category_rel_id: i,
+                      cart_prod_id: cartProduct.id,
+                    })
+                  );
+
+                  var setCustomizedadds = models.CartCustomizeRelationship.bulkCreate(
+                    addsSelectionArrayToCreate,
                     { transaction: t }
                   );
 
@@ -1263,6 +1350,29 @@ router.post(
                     { transaction: t }
                   );
 
+                  var quantityId = item.quantityId || null;
+                  var sizeType = item.sizeType;
+                  var setQuantity;
+                  if(quantityId && quantityId != null && quantityId != undefined && quantityId != ""){
+                    if(sizeType === "shoesSize" && item.shoesSize){
+                      setQuantity = cartProduct.createMeta(
+                        { property: "shoesSize", value: item.shoesSize, quantity_id:  quantityId},
+                        { transaction: t }
+                      );
+                    }else if(sizeType === "sizeable"){
+                      setQuantity = cartProduct.createMeta(
+                        { property: "sizeable", value: item.size, quantity_id:  quantityId},
+                        { transaction: t }
+                      );
+                    }else if(sizeType === "accessorySize"){
+                      setQuantity = cartProduct.createMeta(
+                        { property: "accessorySize", value: item.size, quantity_id:  quantityId},
+                        { transaction: t }
+                      );
+                    }else{
+                      setQuantity = null;
+                    }
+                  }
                   var setSize =
                     typeof item.size == "string"
                       ? cartProduct.createMeta(
@@ -1275,12 +1385,13 @@ router.post(
                           { transaction: t }
                         )
                       : null;
-                  var setShoesSize = item.shoesSize
-                    ? cartProduct.createMeta(
-                        { property: "shoesSize", value: item.shoesSize },
-                        { transaction: t }
-                      )
-                    : null;
+                  
+                  // var setShoesSize = item.shoesSize
+                  //   ? cartProduct.createMeta(
+                  //       { property: "shoesSize", value: item.shoesSize },
+                  //       { transaction: t }
+                  //     )
+                  //   : null;
                   var addPriceCustom =
                     item.customized && item.price
                       ? cartProduct.createMeta(
@@ -1305,6 +1416,9 @@ router.post(
                           { transaction: t }
                         )
                         .then((meta) => {
+                          console.log('====================================');
+                          console.log(meta);
+                          console.log('====================================');
                           var imageArr = [];
                           item.note.images.map((image) => {
                             imageArr.push({
@@ -1321,11 +1435,12 @@ router.post(
                   return Promise.all([
                     setCustomizedFabric,
                     setCustomizedYaka,
+                    setCustomizedadds,
                     setCustomizedZarzour,
                     setCustomizedAkmam,
                     setCustomizedOthers,
                     setSize,
-                    setShoesSize,
+                    setQuantity,
                     setNote,
                     addPriceCustom,
                     addPricePromo,
@@ -2009,6 +2124,11 @@ router.post(
                           rel.type == "yaka"
                       )
                       .map((i) => i.category_rel_id),
+                    adds_custom: cartCustomizes
+                      .filter(
+                        (rel) => (rel.type === "accessory" || rel.type === "betana")
+                      )
+                      .map((i) => i.category_rel_id),
                     zarzour_custom: cartCustomizes
                       .filter(
                         (rel) =>
@@ -2372,7 +2492,17 @@ router.post(
                   ? product.price_discount
                   : product.price;
 
-                productsCost += parseFloat(productPrice) * cartProduct.quantity;
+                // productsCost += parseFloat(productPrice) * cartProduct.quantity;
+                // underwear products count discount
+                productsCost += product.id == 1614 && cartProduct.quantity > 11
+                  ? (400 / 12) * cartProduct.quantity
+                  : product.id == 1614 && cartProduct.quantity > 5
+                  ? (204 / 6) * cartProduct.quantity
+                  : (product.id == 1612 || product.id == 1613) && cartProduct.quantity > 11
+                  ? (300 / 12) * cartProduct.quantity
+                  : (product.id == 1612 || product.id == 1613) && cartProduct.quantity > 5
+                  ? (168 / 6) * cartProduct.quantity
+                  : parseFloat(productPrice) * cartProduct.quantity;
                 // cartItemsNo += cartProduct.quantity;
 
                 // cost += sizeManCost;

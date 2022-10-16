@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     type: {
       type: DataTypes.ENUM,
-      values: ["fabric", "yaka","zarzour","akmam","others"]
+      values: ["fabric", "yaka","zarzour","adds","akmam","others"]
     },
   },{
     //foreign keys are underscored

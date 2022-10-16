@@ -355,6 +355,7 @@ router.post('/banner', (req, res) => {
     Content.findAll({
       where: { type: "banner" },
       include: [{ association: "Link" }],
+      order: [['id', 'DESC']],
     }),
     Content.findAll({
       where: { title: "mobile_banner" },

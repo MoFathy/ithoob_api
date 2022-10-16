@@ -15,7 +15,12 @@ module.exports = (sequelize, DataTypes) => {
         "value_4",
         "value_5",
         "value_6",
-        "value_7"
+        "value_7",
+        "value_8",
+        "value_9",
+        "value_10",
+        "value_11",
+        "value_12",
       ],
       defaultValue: "value_1",
     },
@@ -44,6 +49,9 @@ module.exports = (sequelize, DataTypes) => {
   image: {
 	type: DataTypes.STRING
   },
+  video: {
+    type: DataTypes.STRING
+    },
   },{
     //foreign keys are underscored
     underscored: true,

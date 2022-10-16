@@ -211,6 +211,9 @@ router.put(
         if(order.delivery_cost && order.delivery_cost != 0){
           discounts += `<h4 style="text-align:right"> رسوم توصيل : ${order.delivery_cost}</h4>`;
         }
+        if(order.quantity_discount && order.quantity_discount != 0){
+          discounts += `<h4 style="text-align:right"> رسوم توصيل : ${order.quantity_discount}</h4>`;
+        }
         // get order details
         let products = `<h3 style="padding:8px;border:1px solid #fdfdfd;border-radius:8px;text-align:center;background:#ddd;margin:10px">بيانات الطلب</h3>`+
         `<div style="display:flex;justify-content: space-between;direction: rtl;padding: 20px;">`+
@@ -225,23 +228,34 @@ router.put(
           products += `<div style="display:flex;direction: rtl;padding: 10px;"><img src="${product.image}" width="120px;" style="border:1px solid #ddd;border-radius: 10px; margin: 10px;"><div><h3>${product.title}</h3><p> الكميه : ${quantity}</p><p> السعر :${cost}</p></div></div>`;
         });
         // the message which will be send to the client
-        let message = `<h4 style="text-align:right">أهلا وسهلا</h4>`;
+        let message = `<h4 style="text-align:right">عميلنا الراقي!</h4>`;
         if(order.status == "pending_payment"){
-          message += `<p style="text-align:right">لتأكيد طلبك  ${order.id}, الرجاء تأكيد الحوالة المالية على حساب (3105000068201316372000)</p>`;
+          message += `<p style="text-align:right">لتأكيد طلبك نرجو تحويل المبلغ على رقم الحساب :3105000068201316372000 </p>`;
         }else if(order.status == "production"){
-          message += `<p style="text-align:right">حالة طلبك ${order.id} قيد التنفيذ.</p>`;
+          message += `<p style="text-align:right">طلبك رقم ${order.id} قيد التنفيذ.
+          شكراً وشرفتنا .
+          </p>`;
         }else if(order.status == "charged"){
-          message += `<p style="text-align:right">طلبك رقم ${order.id} جاهز. و سيتم شحنه إليك</p>`;
+          message += `<p style="text-align:right">طلبك رقم ${order.id} جاهز وسيتم شحنه في أقرب وقت .
+          شكراً وشرفتنا .
+          </p>`;
         }else if(order.status == "delivered"){
-          message += `<p style="text-align:right">تم تسليم طلبك ${order.id}. ملبوس العافية.</p>`;
+          message += `<p style="text-align:right"> طلبك وصل وتم تسليمه .
+          ملبوس العافية ، شكراً لذوقك وبانتظارك المرة الجاية
+          </p>`;
         }else if(order.status == "pickable"){
-          message += `<p style="text-align:right">تم الانتهاء من تحضير طلبك رقم ${order.id}. يمكنك استلام الطلب من معرضنا الآن!</p>`;
+          message += `<p style="text-align:right">عميلنا الراقي! 
+          نبشرك انتهينا من تحضير طلبك رقم ${order.id} . 
+          بإمكانك استلامه من معرضنا الآن .
+          </p>`;
         }else if(order.status == "cancelled"){
-          message += `<p style="text-align:right">تم إلغاء طلبك ${order.id}</p>`;
+          message += `<p style="text-align:right">خسارة تم إلغاء طلبك ، شكراً لك ونشوفك مرة ثانية .</p>`;
         }else{
-          message += `<p style="text-align:right"> ${order.id} فى إنتظار تأكيد الطلب رقم</p><p style="text-align:right"></p><p style="text-align:right"></p>`;
+          message += `<p style="text-align:right">طلبك رقم ${order.id} بانتظار التأكيد.
+          شكراً وشرفتنا .
+          </p>`;
         }
-        message += `<p style="text-align:right">شاكرين لكم ذوقكم الراقي..</p><p style="text-align:right">الاستفسارات يمكنك التواصل عبر الواتساب(966594704888)</p>`;
+        message += `<p style="text-align:right"> للتواصل عبر الواتس اب : 966594704888</p>`;
          
         sendMail(order.User.email,"iThoob Order", ` ${order.User.name} مرحبا `,message,"orderStatus",products);
         sendMessage(
